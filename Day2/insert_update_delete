@@ -18,3 +18,12 @@ select avg(age)from pepole;
 select max(age) from pepole;
 select upper(name)from pepole;
 select substring(name,1,2)from pepole;
+
+create database GPH
+use GPH
+create table customer(custm_id int primary key, custm_name varchar(100), custm_age int, custm_country varchar(100))
+select * from customer
+insert into customer(custm_id,custm_name,custm_age,custm_country) values(1,'Rani', 21, 'canada');
+select count(custm_id), custm_country
+from customer
+Group By custm_country;
