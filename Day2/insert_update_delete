@@ -1,0 +1,20 @@
+create database pen
+use pen
+create table pepole(id int primary key, name varchar(100), age int, salary Float)
+select* from pepole
+alter table pepole add pincode int
+insert into pepole(id, name, age, salary) values(1, 'Soni', 21, 12000);
+insert into pepole(id, name, age, salary) values(2, 'priya', 22, 13000);
+insert into pepole(id, name, age, salary) values(3, 'priti', 23, 14000);
+insert into pepole(id, name, age, salary) values(4, 'sudha', 18, 13000);
+alter table people drop column 
+update pepole set pincode= 852216 where id=1;
+update pepole set pincode= 567894 where id=2;
+update pepole set pincode= 678954 where id=2;
+delete from pepole where id=2;
+select count(name) from pepole
+Exec sp_rename 'pepole', 'shalini';
+select avg(age)from pepole;
+select max(age) from pepole;
+select upper(name)from pepole;
+select substring(name,1,2)from pepole;
