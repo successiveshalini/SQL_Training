@@ -1,0 +1,23 @@
+create database Hello1
+use Hello1
+create table Mohan(id int primary key, name varchar(100), City varchar(50),state varchar(50),salary float);
+select * from Mohan
+insert into Mohan(id, name, city, state, salary) values (1, 'soni', 'sharsa','bihar', 12905);
+insert into Mohan(id, name, city, state, salary) values (2, 'priya', 'Ara','bihar', 12000);
+insert into Mohan(id, name, city, state, salary) values (3, 'Rani', 'buxer','bihar', 137895);
+insert into Mohan(id, name, city, state, salary) values (4, 'mohit', 'sharsa','bihar', 123456);
+create table shoan(id int primary key, name varchar(100), country varchar(50))
+insert into shoan(id, name, country) values (1, 'Rohi Tiwari', 'India');
+insert into shoan(id, name, country) values (2, 'Mohit kumar', 'India');
+insert into shoan(id, name, country) values (3, 'soni', 'canada');
+insert into shoan(id, name, country) values (4, 'Rani', 'china');
+select* from shoan
+select * from Mohan
+select * from  Mohan as M inner join shoan as s on M.id=s.id
+select * from Mohan as M Left join shoan as s on M.id=s.id
+select * from  Mohan as M right join shoan as s on M.id=s.id
+select * from Mohan as M Full join shoan as s on M.id=s.id
+
+
+
+
