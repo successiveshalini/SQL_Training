@@ -1,43 +1,143 @@
-create database Sql_Assignment1
-use sql_Assignment
+create database ABC3
+Use ABC3
+create table tbl_Employee(EmployeeID int primary key, firstname varchar(50),lastname varchar(50), DepartmentID int)
+insert into tbl_Employee(EmployeeID,firstname,lastname )values(1, 'Shalini','kumari')
+select * from tbl_Employee
+update tbl_Employee set DepartmentID=101 where EmployeeID=1
 
-create table student(studentid int primary key, firstname varchar(50),lastname varchar(50))
-select * from student
-insert into student(studentid, firstname, lastname) values (1, 'puja', 'kumari')
-insert into student(studentid, firstname, lastname) values (2, 'Rani', 'singh')
-insert into student(studentid, firstname, lastname) values (3, 'priti', 'raj')
-insert into student(studentid, firstname, lastname) values (4, 'soni', 'singh')
+create table tbl_Depatment (Departmentid int primary key, departmentname varchar(50))
+select * from tbl_Depatment
+insert into tbl_Depatment(Departmentid,departmentname) values (1, 'Mca')
 
+create table tbl_Orders(OrderID int PRIMARY KEY,CustomerId int, OrderDate datetime)
+select * from tbl_Orders
+Insert Into tbl_Orders(OrderID,CustomerId,OrderDate)values(1234, 12, getdate());
 
-create table course(courseid int primary key, coursename varchar(50),  departmentid int )
-select * from course
-insert into course(courseid, coursename, departmentid) values (1, 'BCA', 2)
-insert into course(courseid, coursename, departmentid) values (2, 'Mca', 3)
-insert into course(courseid, coursename, departmentid) values (3, 'physics', 4)
-insert into course(courseid, coursename, departmentid) values (4, 'music', 5)
+create table tbl_OrdersDetails(OrderDetailID int PRIMARY KEY,OrderId int,ProductID int, Quantity int);
+select * from tbl_OrdersDetails
 
+create table tbl_Products (ProductID int PRIMARY KEY,ProductName varchar(50), UnitPrice int);
+select * from tbl_Products
+insert into tbl_Products(productID,productName,Unitprice)values(1, 'Enduring', 23);
 
-create table department(departmentId int primary key, departmentname varchar(50))
-select * from department
-insert into department(departmentid, departmentname) values (1, 'Mca')
-insert into department(departmentid, departmentname) values (2, 'Bca')
-insert into department(departmentid, departmentname) values (3, 'Bba')
-insert into department(departmentid, departmentname) values (4, 'Mba')
+Insert Into tbl_Orders Values(1345,13,'2423-08-24')
+Insert Into tbl_Orders Values(1239,14,'2123-09-18')
+insert into tbl_OrdersDetails(OrderDetailID,OrderId,ProductID,Quantity)values(1, 2, 3, 4);
 
+select * from tbl_Orders
 
+ALTER TABLE tbl_Department ADD  FOREIGN KEY (departmentID) REFERENCES tbl_Employees (departmentID); 
 
-create table Enrollment(Enrollmentid int primary key, studentid int, courseid int, Enrollmentdate datetime);
-select * from Enrollment
-insert into Enrollment(Enrollmentid,studentid, courseid, Enrollmentdate) values (1, 2, 3, getdate());
-insert into Enrollment(Enrollmentid,studentid, courseid, Enrollmentdate) values (2, 3, 6, getdate());
-insert into Enrollment(Enrollmentid,studentid, courseid, Enrollmentdate) values (3, 4, 7, getdate());
-insert into Enrollment(Enrollmentid,studentid, courseid, Enrollmentdate) values (4, 5, 8, getdate());
+--Question 1 Retrieve the first and last names of all employees.
 
-drop table Enrollment
+SELECT firstname, lastname From tbl_Employee;
 
-select * from student
-select * from course
-select * from department
-select * from Enrollment
+--QUESTION 2 Find the total number of employees in each department.
 
---1. Retrieve the full names of students who are enrolled in more than one course in the "Computer science deparment
+SELECT departmentID, COUNT(*) FROM tbl_Depatment  GROUP BY departmentID;
+
+--Question 3:List the names of departments that have no employees.
+
+SELECT * FROM tbl_Employee  WHERE departmentID NOT IN (select departmentID FROM tbl_Employee);
+
+--Question 4: Retrieve the details of the employee with the highest EmployeeID.
+
+SELECT TOP 1 * FROM tbl_Employee  ORDER BY EmployeeID DESC ;
+
+--Quesrion 5: Calculate the average quantity of products ordered in the OrderDetails table
+
+SELECT AVG(Quantity) AS Average FROM tbl_OrdersDetails ;
+
+--Question 6:List the names of employees who have placed orders.
+select e.firstname, e.lastname 
+FROM tbl_Employee as e inner join tbl_Orders as O on O.CustomerId=E.EmployeeID
+
+--Question 7: Find the total number of orders placed in each year.
+select year(orderdate),Count(orderid)
+from tbl_Orders
+group by year(OrderDate)
+
+--Question 8: Retrieve the product names that have never been ordered.
+select ProductName
+from tbl_Products 
+where ProductID NOT IN (select ProductID from tbl_OrdersDetails)
+
+--Question 9: List the employees who have the same first name as their department.
+SELECT EmployeeID firstname,  departmentname
+FROM tbl_Employee
+join tbl_Depatment d ON firstname = departmentname
+
+--Question 10 : Calculate the total price of products sold in each order.
+select ProductName, Unitprice, Quantity, UnitPrice*Quantity as total
+from tbl_Products as P
+inner join tbl_OrdersDetails as OD on p.ProductID = OD.ProductID
+
+--Question 11 : Find the customer who placed the largest total value of orders.
+select top(1) firstname, lastname, (P.UnitPrice * OD.Quantity) as total
+from tbl_Products as P
+inner join tbl_OrdersDetails as OD on OD.ProductID = P.ProductID
+inner join tbl_orders as O on O.OrderId = OD.OrderId
+inner join tbl_Employee as E on E.EmployeeID = O.CustomerId
+order by total desc 
+
+--Question 12 : Retrieve the employee with the highest total quantity of products ordered.
+select top(1) firstname, lastname, OD.Quantity as highest
+from tbl_OrdersDetails as OD
+inner join tbl_orders as O on OD.OrderId = O.OrderId
+inner join tbl_Employee as E on E.EmployeeID = O.CustomerId
+order by highest desc
+
+--Question 13 : List the departments with more than five employees.
+select departmentname,count(EmployeeId) as Employee
+    from tbl_Depatment as D
+    inner join tbl_Employee as E
+    On D.Departmentid=E.DepartmentID
+    group by D.departmentname
+    having count(E.EmployeeID)>=5
+--Question 14 :  Calculate the average unit price of products in each department.
+select P.ProductName from tbl_Products as P
+inner join
+tbl_OrdersDetails as OD
+on P.ProductID = OD.ProductID
+group by P.ProductName
+having count(od.ProductID) >= 100
+
+-- Question 15 :  SELECT OrderID, TotalPrice
+select top(1)productname,UnitPrice*Quantity As TOTAL
+    from tbl_Products as P
+    inner join tbl_OrdersDetails as OD
+    on P.ProductID=OD.ProductID
+    order by TOTAL desc
+
+-- Question 16: List the employees who have not placed any orders.
+select * from tbl_Employee where EmployeeID not in (select customerid from tbl_Orders)
+
+-- Question 17: Calculate the total revenue generated by each product.
+select  productname, sum(p.UnitPrice * p.UnitPrice) As total
+from tbl_Products as P
+inner join tbl_OrdersDetails as OD
+on P.ProductID = OD.ProductID
+group by P.ProductName
+
+-- Question 18: Find the products that have been ordered more than 100 times.
+select D.departmentname , avg(P.UnitPrice) as avg_price 
+from tbl_Depatment D
+inner join tbl_Employee E ON  E.DepartmentID = D.DepartmentID
+inner join tbl_orders O ON E.EmployeeID = O.CustomerId
+inner join tbl_OrdersDetails OD ON OD.OrderId = O.OrderId
+inner join tbl_Products P ON P.ProductName = OD.ProductID 
+group by D.departmentname;
+
+--Question 19 : List the employees who have placed orders on weekends (Saturday or Sunday).
+select firstname, lastname from tbl_Employee as E
+inner join tbl_Orders as O
+on E.EmployeeID = O.CustomerId
+where datename(dw, OrderDate) = 'Saturday' or datename(dw, OrderDate) = 'Sunday'
+
+--Question 20: Retrieve the product that has the highest total revenue.
+select top(1)productname,UnitPrice*Quantity As TOTAL
+    from tbl_Products as P
+    inner join tbl_OrdersDetails as OD
+    on P.ProductID=OD.ProductID
+    order by TOTAL desc
+
